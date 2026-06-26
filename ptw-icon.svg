@@ -1,6 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#8d1118"/>
-  <path d="M86 154h340v54H309v174h-62V208H86v-54Z" fill="#fff" opacity=".96"/>
-  <path d="M96 312h86l30-76 41 126 44-154 36 104h83v46H298l-28-82-46 158-43-130-15 54H96v-46Z" fill="#d6ad60"/>
-  <text x="256" y="456" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="900" fill="#fff" opacity=".9">PTW 2027</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#073ea8"/><stop offset="1" stop-color="#071b56"/></linearGradient></defs><rect width="512" height="512" rx="92" fill="url(#b)"/><rect x="18" y="18" width="476" height="476" rx="78" fill="none" stroke="#f7c84b" stroke-width="10"/><path d="M124 145c24-34 70-47 111-25 39 21 50 61 31 93-20 35-62 48-103 36" fill="none" stroke="#f7c84b" stroke-width="26" stroke-linecap="round"/><path d="M118 172h82l-82 118h110" fill="none" stroke="#f7c84b" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/><path d="M328 176h78l-76 136" fill="none" stroke="#e93655" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><path d="M162 236h188M256 236v156" stroke="#f7c84b" stroke-width="34" stroke-linecap="round"/><path d="M136 314l72 104 48-92 48 92 72-104" fill="none" stroke="#f7c84b" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><path d="M256 333l31 91h-62z" fill="#e93655"/></svg>

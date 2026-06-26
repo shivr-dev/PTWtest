@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTW 2027 — Registration Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--red:#d32f2f;--red-d:#b71c1c;--dark:#0d1117;--gray:#6b7280;--gray-mid:#374151;--bg:#f8fafc;--border:#e5e7eb;--gold:#f59e0b;--green:#16a34a;--font-h:'Montserrat',sans-serif;--font-b:'Inter',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--dark);font-family:var(--font-b);}
+
+/* NAV */
+.navbar{background:var(--red);display:flex;justify-content:space-between;align-items:center;padding:14px 40px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15);}
+.logo{font-family:var(--font-h);font-size:22px;font-weight:900;color:#fff;cursor:pointer;text-decoration:none;}
+.logo em{font-style:normal;color:rgba(255,255,255,.5);font-size:11px;font-weight:400;letter-spacing:2px;margin-left:6px;}
+.nav-back{color:#fff;font-family:var(--font-h);font-size:12px;font-weight:700;text-decoration:none;opacity:.8;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{opacity:1;}
+
+/* LAYOUT */
+.page{max-width:1000px;margin:0 auto;padding:48px 24px 80px;}
+.page-title{font-family:var(--font-h);font-size:2rem;font-weight:900;margin-bottom:6px;letter-spacing:-.5px;}
+.page-sub{font-size:14px;color:var(--gray);margin-bottom:40px;}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;margin-bottom:44px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 28px;gap:0;}
+.step{display:flex;align-items:center;gap:10px;flex:1;}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:13px;font-weight:800;flex-shrink:0;}
+.step-num.done{background:var(--green);color:#fff;}
+.step-num.active{background:var(--red);color:#fff;}
+.step-num.todo{background:var(--border);color:var(--gray);}
+.step-label{font-family:var(--font-h);font-size:12px;font-weight:700;}
+.step-label.active{color:var(--dark);}
+.step-label.todo{color:var(--gray);}
+.step-divider{height:2px;flex:1;background:var(--border);margin:0 12px;}
+.step-divider.done{background:var(--green);}
+
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:32px;}
+.card-title{font-family:var(--font-h);font-size:17px;font-weight:800;margin-bottom:6px;}
+.card-desc{font-size:13px;color:var(--gray);margin-bottom:24px;line-height:1.6;}
+
+/* ELIGIBILITY */
+.elig-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.elig-item{border:1.5px solid var(--border);border-radius:10px;padding:18px 16px;}
+.elig-item.ok{border-color:#bbf7d0;background:#f0fdf4;}
+.elig-item.warn{border-color:#fde68a;background:#fffbeb;}
+.elig-icon{font-size:24px;margin-bottom:8px;}
+.elig-title{font-family:var(--font-h);font-size:13px;font-weight:800;margin-bottom:4px;}
+.elig-desc{font-size:12px;color:var(--gray);line-height:1.5;}
+.elig-check{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;padding:16px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.elig-check label{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--gray-mid);cursor:pointer;}
+.elig-check input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:1px;accent-color:var(--red);}
+
+/* FORMS */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fg{margin-bottom:18px;}
+.fg label{display:block;font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:.3px;margin-bottom:7px;color:var(--gray-mid);text-transform:uppercase;}
+.fg input,.fg select,.fg textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-b);outline:none;transition:.2s;background:#fff;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--red);}
+.fg textarea{resize:vertical;min-height:80px;}
+.fg-hint{font-size:11px;color:var(--gray);margin-top:5px;line-height:1.4;}
+.required{color:var(--red);}
+
+/* SESSION PICKER */
+.session-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding-right:4px;}
+.session-card{border:1.5px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:.2s;display:flex;gap:16px;align-items:flex-start;}
+.session-card:hover{border-color:var(--red);background:#fef9f9;}
+.session-card.selected{border-color:var(--red);background:#fff5f5;}
+.session-card input[type=radio]{accent-color:var(--red);flex-shrink:0;margin-top:3px;}
+.session-info{flex:1;}
+.session-title{font-family:var(--font-h);font-size:13px;font-weight:800;margin-bottom:4px;}
+.session-meta{font-size:12px;color:var(--gray);line-height:1.6;}
+.session-badge{display:inline-block;font-family:var(--font-h);font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;letter-spacing:1px;margin-bottom:5px;}
+.badge-center{background:var(--dark);color:#fff;}
+.badge-home{background:#1e3a5f;color:#fff;}
+.badge-open{background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;}
+.badge-deadline{color:var(--red);font-size:11px;font-weight:600;margin-top:4px;}
+.session-filter{display:flex;gap:8px;margin-bottom:14px;}
+.filter-btn{padding:7px 14px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font-h);font-size:11px;font-weight:700;cursor:pointer;background:#fff;transition:.2s;}
+.filter-btn.active{background:var(--dark);color:#fff;border-color:var(--dark);}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:.2s;background:var(--bg);}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--red);background:#fef9f9;}
+.upload-zone svg{margin-bottom:10px;}
+.upload-title{font-family:var(--font-h);font-size:13px;font-weight:700;margin-bottom:4px;}
+.upload-sub{font-size:11px;color:var(--gray);}
+.upload-file-list{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+.upload-file-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;}
+.upload-file-item.ok{border-color:#bbf7d0;}
+.upload-file-item.err{border-color:#fca5a5;background:#fff5f5;}
+.ufi-name{flex:1;font-size:13px;font-weight:500;}
+.ufi-size{font-size:11px;color:var(--gray);}
+.ufi-rm{background:none;border:none;cursor:pointer;color:var(--gray);font-size:16px;}
+.photo-rules{background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:18px;margin-bottom:20px;}
+.photo-rules h4{font-family:var(--font-h);font-size:12px;font-weight:800;margin-bottom:10px;color:#92400e;}
+.photo-rules ul{font-size:12px;color:#78350f;line-height:1.7;padding-left:18px;}
+
+/* DOC REQUIREMENTS */
+.doc-req-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.doc-req-hd{background:var(--bg);padding:12px 16px;font-family:var(--font-h);font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.doc-req-bd{padding:14px 16px;font-size:12px;color:var(--gray);line-height:1.65;}
+.doc-req-bd ul{padding-left:16px;}
+
+/* SIDEBAR SUMMARY */
+.summary-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;position:sticky;top:80px;}
+.summary-title{font-family:var(--font-h);font-size:14px;font-weight:800;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.summary-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px;}
+.summary-row .label{color:var(--gray);}
+.summary-row .value{font-weight:600;text-align:right;}
+.summary-divider{height:1px;background:var(--border);margin:14px 0;}
+.summary-total{display:flex;justify-content:space-between;font-family:var(--font-h);font-size:15px;font-weight:900;}
+.summary-total .price{color:var(--red);}
+.progress-bar{background:var(--border);border-radius:4px;height:6px;margin:16px 0 4px;}
+.progress-fill{background:var(--red);height:6px;border-radius:4px;transition:width .4s;}
+.progress-label{font-size:11px;color:var(--gray);}
+
+/* NOTICE CARD */
+.notice-card{border:1.5px solid #fde68a;background:#fffbeb;border-radius:10px;padding:16px;margin-bottom:18px;}
+.notice-card h4{font-family:var(--font-h);font-size:12px;font-weight:800;color:#92400e;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.notice-card p{font-size:12px;color:#78350f;line-height:1.6;}
+
+/* ACTIONS */
+.actions{display:flex;gap:12px;margin-top:28px;}
+.btn-primary{padding:14px 32px;background:var(--red);color:#fff;border:none;border-radius:8px;font-family:var(--font-h);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.3px;}
+.btn-primary:hover{background:var(--red-d);}
+.btn-primary:disabled{background:var(--border);color:var(--gray);cursor:not-allowed;}
+.btn-secondary{padding:14px 28px;background:#fff;color:var(--dark);border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-h);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.btn-secondary:hover{background:var(--bg);}
+
+/* SUCCESS */
+.success-page{max-width:600px;margin:60px auto;text-align:center;padding:0 24px;}
+.success-icon-big{font-size:72px;margin-bottom:20px;}
+.success-title{font-family:var(--font-h);font-size:2rem;font-weight:900;margin-bottom:12px;}
+.success-desc{font-size:15px;color:var(--gray);line-height:1.7;margin-bottom:32px;}
+.ticket-box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:28px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+.ticket-label{font-size:11px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.ticket-num{font-family:var(--font-h);font-size:2.2rem;font-weight:900;color:var(--red);letter-spacing:4px;margin-bottom:20px;}
+.ticket-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;}
+.td-item{border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.td-label{font-size:11px;color:var(--gray);margin-bottom:3px;}
+.td-value{font-family:var(--font-h);font-size:13px;font-weight:700;}
+.next-steps{text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;}
+.next-steps h4{font-family:var(--font-h);font-size:13px;font-weight:800;margin-bottom:12px;}
+.next-steps ol{font-size:13px;color:var(--gray-mid);line-height:1.8;padding-left:18px;}
+
+/* LOADING */
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.9);display:none;justify-content:center;align-items:center;z-index:500;flex-direction:column;gap:14px;}
+.loading-overlay.show{display:flex;}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-family:var(--font-h);font-size:14px;font-weight:700;color:var(--gray);}
+
+input[type=file]{display:none;}
+
+/* PTW no-default-link-style */
+a, a:visited, a:hover, a:active { text-decoration: none !important; color: inherit; }
+.nav-links a, .nav-links a:visited { color:#fff !important; }
+
+/* one-navbar-fix */
+#successPage .navbar{display:none!important;}
+.navbar .logo{color:#fff!important;}
+@media(max-width:700px){.navbar{padding:12px 16px;gap:10px}.nav-back{font-size:11px}.lang-select{max-width:130px}}
+
+/* PTW no default link underline v6 */
+a, a:visited, a:hover { text-decoration:none !important; }
+.nav-back, .nav-back:visited { color:#fff !important; text-decoration:none !important; }
+</style>
+
+<style id="ptw-global-polish">
+a, a:link, a:visited, a:hover, a:active { text-decoration: none !important; }
+a { color: inherit; }
+.nav-links a, .logo, .nav-back, footer a, .footer-col a, .footer-col li a { color: inherit !important; text-decoration: none !important; }
+.acc-inner a, .link-btn, .view-link, .elig-desc a, .card-desc a, .doc-req-bd a, .cb-btn-secondary { color: var(--red) !important; text-decoration: none !important; }
+.acc-inner a.link-btn, a.link-btn { color: var(--red) !important; border-color: #f3b4b4 !important; }
+.lang-select { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.45); padding: 7px 12px; border-radius: 4px; font-family: var(--font-h, sans-serif); font-weight: 700; font-size: 11px; cursor: pointer; outline: none; }
+.lang-select option { color:#000; background:#fff; }
+</style>
+
+</head>
+<body>
+
+<nav class="navbar" id="mainNavbar">
+  <a class="logo" href="index.html">PTW <em>2027</em></a>
+  <select class="lang-select" aria-label="Language"><option value="en">English (EN)</option><option value="zh">简体中文 (ZH)</option><option value="ja">日本語 (JA)</option><option value="ko">한국어 (KO)</option><option value="fr">Français (FR)</option><option value="ru">Русский (RU)</option></select>
+  <a class="nav-back" href="ptw2027-news.html" style="margin-left:auto;margin-right:18px;">Announcements</a>
+  <a class="nav-back" href="ptw2027-download.html" style="margin-right:18px;">Download</a>
+  <a class="nav-back" href="index.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Home
+  </a>
+</nav>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Saving your application…</div>
+</div>
+
+<!-- MAIN REGISTRATION FLOW -->
+<div id="mainFlow">
+<div class="page">
+  <h1 class="page-title">PTW 2027 Registration</h1>
+  <p class="page-sub">Complete all four steps to secure your exam seat. This page auto-saves your progress.</p>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepper">
+    <div class="step"><div class="step-num active" id="sn1">1</div><span class="step-label active" id="sl1">Account & Eligibility</span></div>
+    <div class="step-divider" id="sd1"></div>
+    <div class="step"><div class="step-num todo" id="sn2">2</div><span class="step-label todo" id="sl2">Select Session</span></div>
+    <div class="step-divider" id="sd2"></div>
+    <div class="step"><div class="step-num todo" id="sn3">3</div><span class="step-label todo" id="sl3">Upload Documents</span></div>
+    <div class="step-divider" id="sd3"></div>
+    <div class="step"><div class="step-num todo" id="sn4">4</div><span class="step-label todo" id="sl4">Confirm & Submit</span></div>
+  </div>
+
+  <div class="two-col">
+    <!-- LEFT: STEPS -->
+    <div>
+
+      <!-- STEP 1: ACCOUNT & ELIGIBILITY -->
+      <div id="step1">
+        <div class="card">
+          <div class="card-title">Step 1 — Account & Eligibility</div>
+          <div class="card-desc">Create your PTW account and confirm your eligibility before proceeding.</div>
+
+          <!-- Eligibility Requirements -->
+          <div class="elig-grid">
+            <div class="elig-item ok">
+              <div class="elig-icon">🎂</div>
+              <div class="elig-title">Age Requirement</div>
+              <div class="elig-desc">Must be <strong>16 years or older</strong> on the exam date. No upper age limit.</div>
+            </div>
+            <div class="elig-item ok">
+              <div class="elig-icon">🎓</div>
+              <div class="elig-title">Education</div>
+              <div class="elig-desc">Minimum <strong>completion of secondary education</strong> (high school diploma or equivalent).</div>
+            </div>
+            <div class="elig-item ok">
+              <div class="elig-icon">🪪</div>
+              <div class="elig-title">Identity Documents</div>
+              <div class="elig-desc">Valid <strong>passport</strong> (preferred), or government-issued national ID with photo.</div>
+            </div>
+            <div class="elig-item warn">
+              <div class="elig-icon">🌐</div>
+              <div class="elig-title">Home Edition: Tech</div>
+              <div class="elig-desc">Requires a stable internet connection (≥10 Mbps), camera, and microphone. <a href="ptw2027-guide.html" style="color:var(--red);">See requirements →</a></div>
+            </div>
+          </div>
+
+          <div class="elig-check">
+            <label><input type="checkbox" id="ec1"> I am 16 years of age or older on my intended exam date</label>
+            <label><input type="checkbox" id="ec2"> I hold a valid passport or government-issued photo ID</label>
+            <label><input type="checkbox" id="ec3"> I have completed secondary education (high school) or higher</label>
+            <label><input type="checkbox" id="ec4"> I have read and agree to the PTW 2027 Candidate Agreement and Privacy Policy</label>
+          </div>
+
+          <!-- Account form -->
+          <hr style="border:none;border-top:1px solid var(--border);margin:22px 0;">
+          <div class="card-title" style="font-size:15px;margin-bottom:14px;">Create Your Account</div>
+
+          <div class="form-row">
+            <div class="fg">
+              <label>First Name <span class="required">*</span></label>
+              <input type="text" id="firstName" placeholder="e.g. Yuki" required>
+            </div>
+            <div class="fg">
+              <label>Last Name <span class="required">*</span></label>
+              <input type="text" id="lastName" placeholder="e.g. Kimura" required>
+            </div>
+          </div>
+          <div class="fg">
+            <label>Full Name as in Passport / ID <span class="required">*</span></label>
+            <input type="text" id="fullName" placeholder="Exactly as printed on your travel document">
+            <div class="fg-hint">Must match your ID document exactly, including middle names. Discrepancies may result in disqualification.</div>
+          </div>
+          <div class="form-row">
+            <div class="fg">
+              <label>Date of Birth <span class="required">*</span></label>
+              <input type="date" id="dob" max="2011-12-31">
+            </div>
+            <div class="fg">
+              <label>Nationality <span class="required">*</span></label>
+              <select id="nationality">
+                <option value="">Select nationality…</option>
+                <option>Chinese</option><option>Japanese</option><option>Korean</option><option>French</option><option>Russian</option><option>American</option><option>British</option><option>German</option><option>Indian</option><option>Singaporean</option><option>Australian</option><option>Canadian</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg">
+              <label>Email Address <span class="required">*</span></label>
+              <input type="email" id="email" placeholder="your@email.com">
+            </div>
+            <div class="fg">
+              <label>Confirm Email <span class="required">*</span></label>
+              <input type="email" id="emailConfirm" placeholder="your@email.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg">
+              <label>Username <span class="required">*</span></label>
+              <input type="text" id="username" placeholder="e.g. yuki_kimura27" oninput="checkUsername(this.value)">
+              <div class="fg-hint" id="usernameHint">3–20 characters, letters, numbers, and underscores only.</div>
+            </div>
+            <div class="fg">
+              <label>ID Document Type <span class="required">*</span></label>
+              <select id="idType">
+                <option value="passport">Passport (Recommended)</option>
+                <option value="national_id">National ID Card</option>
+                <option value="residence_permit">Residence Permit</option>
+                <option value="other">Other (with approval)</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg">
+            <label>Passport / ID Number <span class="required">*</span></label>
+            <input type="text" id="passportNum" placeholder="e.g. A12345678">
+            <div class="fg-hint">This will be printed on your official score report. Do not share this publicly.</div>
+          </div>
+          <div class="fg">
+            <label>Highest Education Level <span class="required">*</span></label>
+            <select id="eduLevel">
+              <option value="">Select…</option>
+              <option value="high_school">High School Diploma</option>
+              <option value="undergraduate">Bachelor's Degree (in progress or complete)</option>
+              <option value="postgraduate">Master's Degree</option>
+              <option value="doctoral">Doctoral / PhD</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn-primary" onclick="goStep2()">Next: Select Session →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: SESSION SELECTION -->
+      <div id="step2" style="display:none;">
+        <div class="card">
+          <div class="card-title">Step 2 — Select Exam Session</div>
+          <div class="card-desc">Choose your preferred test date and format. Seats are reserved on a first-come, first-served basis.</div>
+
+          <div class="session-filter">
+            <button class="filter-btn active" id="fAll" onclick="filterSessions('all')">All Sessions</button>
+            <button class="filter-btn" id="fCenter" onclick="filterSessions('center')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Test Center
+            </button>
+            <button class="filter-btn" id="fHome" onclick="filterSessions('home')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Home Edition
+            </button>
+          </div>
+
+          <div class="session-list" id="sessionList">
+            <!-- Sessions loaded from database / fallback -->
+          </div>
+
+          <div class="notice-card" style="margin-top:18px;">
+            <h4>⚠️ Rescheduling Policy</h4>
+            <p>Reschedule requests must be submitted at least <strong>7 days</strong> before the exam date. A rescheduling fee of USD 25 applies. Maximum 2 reschedules per registration. Refunds (80% of fee) accepted up to 14 days before exam.</p>
+          </div>
+
+          <div class="actions">
+            <button class="btn-secondary" onclick="goStep1()">← Back</button>
+            <button class="btn-primary" onclick="goStep3()">Next: Upload Documents →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: DOCUMENTS -->
+      <div id="step3" style="display:none;">
+        <div class="card">
+          <div class="card-title">Step 3 — Upload Documents</div>
+          <div class="card-desc">All documents must be uploaded in JPEG, PNG, or PDF format. Files must be clear, unobstructed, and within the size limits.</div>
+
+          <!-- Photo rules -->
+          <div class="photo-rules">
+            <h4>📸 Applicant Photo Requirements</h4>
+            <ul>
+              <li>Recent photo taken within the <strong>last 6 months</strong></li>
+              <li>Plain white or light grey background — no patterns, scenery, or other people</li>
+              <li>Face must be <strong>fully visible</strong>, looking straight at the camera</li>
+              <li>No sunglasses, hats, or head coverings (except for religious reasons)</li>
+              <li>Photo dimensions: <strong>600×800 px minimum</strong>, aspect ratio 3:4</li>
+              <li>File size: <strong>200 KB – 5 MB</strong>, JPEG or PNG only</li>
+              <li>Facial expression: <strong>neutral or slight smile</strong>, eyes open and clearly visible</li>
+              <li>No filters, heavy retouching, or digital alterations</li>
+            </ul>
+          </div>
+
+          <!-- Photo Upload -->
+          <div class="fg">
+            <label>Applicant Photo <span class="required">*</span></label>
+            <div class="upload-zone" id="photoZone" onclick="document.getElementById('photoInput').click()" ondragover="dragOver(event,'photoZone')" ondragleave="dragLeave('photoZone')" ondrop="dropFile(event,'photoInput','photoZone')">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <div class="upload-title">Click to upload or drag & drop</div>
+              <div class="upload-sub">JPEG or PNG · 200 KB – 5 MB · 3:4 ratio</div>
+            </div>
+            <input type="file" id="photoInput" accept="image/jpeg,image/png" onchange="previewFile(this,'photoZone','photoList')">
+            <div class="upload-file-list" id="photoList"></div>
+          </div>
+
+          <!-- ID Doc -->
+          <div class="doc-req-card">
+            <div class="doc-req-hd">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              Passport / ID Requirements
+            </div>
+            <div class="doc-req-bd">
+              <ul>
+                <li>Scan or clear photograph of the <strong>data page</strong> (the page with your photo and name)</li>
+                <li>All four corners of the document must be visible</li>
+                <li>Document must be <strong>currently valid</strong> (not expired)</li>
+                <li>Passport must be valid for at least <strong>6 months</strong> past your exam date</li>
+                <li>Image must be in colour, not black and white</li>
+                <li>File size: up to <strong>10 MB</strong> · JPEG, PNG, or PDF</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label>Passport / ID Scan — Front <span class="required">*</span></label>
+            <div class="upload-zone" id="idZone" onclick="document.getElementById('idInput').click()" ondragover="dragOver(event,'idZone')" ondragleave="dragLeave('idZone')" ondrop="dropFile(event,'idInput','idZone')">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M13 9h4M13 12h4M13 15h2"/></svg>
+              <div class="upload-title">Upload Passport / ID Front</div>
+              <div class="upload-sub">JPEG, PNG or PDF · Max 10 MB</div>
+            </div>
+            <input type="file" id="idInput" accept="image/jpeg,image/png,application/pdf" onchange="previewFile(this,'idZone','idList')">
+            <div class="upload-file-list" id="idList"></div>
+          </div>
+
+          <div class="fg">
+            <label>ID Back Side <span style="font-size:11px;color:var(--gray);font-weight:400;">(Required for National ID cards only)</span></label>
+            <div class="upload-zone" id="idBackZone" onclick="document.getElementById('idBackInput').click()" ondragover="dragOver(event,'idBackZone')" ondragleave="dragLeave('idBackZone')" ondrop="dropFile(event,'idBackInput','idBackZone')">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="10" x2="18" y2="10"/><line x1="6" y1="14" x2="10" y2="14"/></svg>
+              <div class="upload-title">Upload ID Back (if applicable)</div>
+              <div class="upload-sub">JPEG, PNG or PDF · Max 10 MB</div>
+            </div>
+            <input type="file" id="idBackInput" accept="image/jpeg,image/png,application/pdf" onchange="previewFile(this,'idBackZone','idBackList')">
+            <div class="upload-file-list" id="idBackList"></div>
+          </div>
+
+          <div class="notice-card">
+            <h4>🔒 Document Security</h4>
+            <p>All documents are encrypted at rest using AES-256 and transmitted via TLS 1.3. Your ID is only used for identity verification and will not be shared with third parties. Documents are deleted from our servers 24 months after your exam date.</p>
+          </div>
+
+          <div class="actions">
+            <button class="btn-secondary" onclick="goStep2()">← Back</button>
+            <button class="btn-primary" onclick="goStep4()">Next: Review & Confirm →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: CONFIRM -->
+      <div id="step4" style="display:none;">
+        <div class="card">
+          <div class="card-title">Step 4 — Review & Confirm</div>
+          <div class="card-desc">Please review all information carefully before submitting. Changes after submission require a formal amendment request.</div>
+
+          <div id="reviewBlock" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;">
+            <!-- filled by JS -->
+          </div>
+
+          <div class="doc-req-card">
+            <div class="doc-req-hd">📋 What Happens After Submission</div>
+            <div class="doc-req-bd">
+              <ul>
+                <li>Document review: 1–3 business days. You'll receive an email confirmation once approved.</li>
+                <li>If documents are rejected, you'll be notified with reasons and allowed to resubmit within 7 days.</li>
+                <li>Your seat is held during review but only confirmed upon document approval.</li>
+                <li>Score reports will be available in your portal 4 business days after your exam date.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="elig-check">
+            <label><input type="checkbox" id="fc1"> I confirm that all information provided is accurate and matches my identity documents</label>
+            <label><input type="checkbox" id="fc2"> I have read and agree to the <strong>PTW Candidate Rules and Fair Use Policy</strong></label>
+            <label><input type="checkbox" id="fc3"> I understand that misrepresentation of information may lead to score cancellation and a 2-year ban from PTW examinations</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn-secondary" onclick="goStep3()">← Back</button>
+            <button class="btn-primary" id="submitBtn" onclick="submitRegistration()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>
+              Submit Registration
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- SIDEBAR -->
+    <div>
+      <div class="summary-card">
+        <div class="summary-title">Application Summary</div>
+        <div class="summary-row"><span class="label">Applicant</span><span class="value" id="sumName">—</span></div>
+        <div class="summary-row"><span class="label">Format</span><span class="value" id="sumFormat">—</span></div>
+        <div class="summary-row"><span class="label">Session</span><span class="value" id="sumSession">—</span></div>
+        <div class="summary-row"><span class="label">Location</span><span class="value" id="sumLocation">—</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-row"><span class="label">Registration fee</span><span class="value">USD 220.00</span></div>
+        <div class="summary-row"><span class="label">Processing fee</span><span class="value">USD 15.00</span></div>
+        <div class="summary-row"><span class="label">Unlimited sends</span><span class="value" style="color:var(--green);">Included</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-row"><span class="label">Payment note</span><span class="value" data-payment-note style="max-width:190px;line-height:1.25;">English/international checkout supports PayPal, credit/debit cards, Apple Pay, and Google Pay.</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-total"><span>Total</span><span class="price" id="sumTotal">USD 235.00</span></div>
+
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%;"></div></div>
+        <div class="progress-label" id="progressLabel">Step 1 of 4</div>
+
+        <div style="margin-top:18px;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-h);font-size:11px;font-weight:800;margin-bottom:6px;color:var(--gray-mid);">NEED HELP?</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.65;">
+            <a href="ptw2027-faq.html" style="color:var(--red);">FAQ</a> · 
+            <a href="ptw2027-guide.html" style="color:var(--red);">Exam Guide</a><br>
+            Email: support@ptw2027.org<br>
+            Mon–Fri, 09:00–18:00 UTC
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /two-col -->
+</div><!-- /page -->
+</div><!-- /mainFlow -->
+
+<!-- SUCCESS PAGE -->
+<div id="successPage" style="display:none;">
+<div class="success-page">
+    <div class="success-icon-big">🎉</div>
+    <h1 class="success-title">Registration Submitted!</h1>
+    <p class="success-desc">Your application has been received. You'll receive a confirmation email within 30 minutes. Document review takes 1–3 business days.</p>
+    <div class="ticket-box">
+      <div class="ticket-label">PTW Registration Number</div>
+      <div class="ticket-num" id="finalTicket">PTW-2027-0000000</div>
+      <div class="ticket-details">
+        <div class="td-item"><div class="td-label">Applicant</div><div class="td-value" id="finalName">—</div></div>
+        <div class="td-item"><div class="td-label">Exam Date</div><div class="td-value" id="finalDate">—</div></div>
+        <div class="td-item"><div class="td-label">Format</div><div class="td-value" id="finalFormat">—</div></div>
+        <div class="td-item"><div class="td-label">Status</div><div class="td-value" style="color:#16a34a;">Pending Review</div></div>
+      </div>
+    </div>
+    <div class="next-steps">
+      <h4>Next Steps</h4>
+      <ol>
+        <li>Check your email for the confirmation receipt (within 30 min)</li>
+        <li>Our team will review your documents within 1–3 business days</li>
+        <li>If approved: you'll receive a Seat Confirmed notification</li>
+        <li>If documents need resubmission: you'll receive specific instructions</li>
+        <li>4 days after your exam, your score report will appear in your portal</li>
+      </ol>
+    </div>
+    <button class="btn-primary" onclick="window.location.href='index.html'" style="width:100%;padding:16px;">Return to PTW Home</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://yexttnnhemdihitqxhha.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlleHR0bm5oZW1kaWhpdHF4aGhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4MzY1MzMsImV4cCI6MjA5NzQxMjUzM30.LTm5wUoVVe6hK4k7bejNuGtYRlAB_p6kO72AIq1tsZI';
+const DOCUMENTS_BUCKET = 'ptw-documents';
+
+let currentStep = 1;
+let selectedSession = null;
+const appState = {};
+
+function humanizeError(err) {
+  const raw = String((err && err.message) || err || '');
+  let detail = raw;
+  try {
+    const m = raw.match(/(\{[\s\S]*\})/);
+    if (m) detail = JSON.parse(m[1]).message || JSON.parse(m[1]).details || raw;
+  } catch (_) {}
+  const txt = (raw + ' ' + detail).toLowerCase();
+  if (txt.includes('duplicate key') && txt.includes('ptw_applicants_email_key')) return 'This email is already registered. Please use another email address, or contact support if this registration belongs to you.';
+  if (txt.includes('duplicate key') && txt.includes('username')) return 'This username is already taken. Please choose a different username.';
+  if (txt.includes('row-level security') || txt.includes('unauthorized') || raw.includes('403')) return 'The server rejected this save because database or file storage permissions are not open for this action. Please check database permissions and file upload policies.';
+  if (txt.includes('bucket') && (txt.includes('not found') || raw.includes('404'))) return 'The document storage bucket could not be found. Please create the storage bucket named ptw-documents.';
+  if (txt.includes('could not find') && txt.includes('schema cache')) return 'A database column used by this page does not exist yet. Please run the latest setup SQL and refresh the page.';
+  if (txt.includes('no open seats') || txt.includes('session not found')) return 'This exam session is no longer available or has no seats left. Please choose another session.';
+  if (txt.includes('failed to fetch') || txt.includes('network')) return 'Network connection failed. Please check your internet connection and try again.';
+  if (txt.includes('invalid input syntax') && txt.includes('uuid')) return 'The selected exam session ID does not match the database format. Please refresh the page and choose a session from the live list.';
+  return 'Registration could not be submitted. Please check your information and try again. Technical detail: ' + raw;
+}
+
+async function sbGet(ep) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${ep}`, {
+    headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`}
+  });
+  const text = await r.text();
+  if (!r.ok) {
+    console.warn(`Database GET failed: ${ep}`, r.status, text);
+    return null;
+  }
+  try { return text ? JSON.parse(text) : null; } catch { return null; }
+}
+
+async function sbPost(ep, body, opts = {}) {
+  const prefer = opts.returnRepresentation === false ? 'return=minimal' : 'return=representation';
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${ep}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': prefer
+    },
+    body: JSON.stringify(body)
+  });
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`Database sync failed on ${ep} (${r.status}). ${text || 'No response body.'}`);
+  }
+  if (!text) return [];
+  try { return JSON.parse(text); } catch { return []; }
+}
+
+async function sbPatch(ep, body, opts = {}) {
+  const prefer = opts.returnRepresentation === false ? 'return=minimal' : 'return=representation';
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${ep}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': prefer
+    },
+    body: JSON.stringify(body)
+  });
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`Database update failed on ${ep} (${r.status}). ${text || 'No response body.'}`);
+  }
+  if (!text) return [];
+  try { return JSON.parse(text); } catch { return []; }
+}
+
+async function sbRpc(functionName, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${functionName}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`Database function failed on ${functionName} (${r.status}). ${text || 'No response body.'}`);
+  }
+  if (!text) return null;
+  try { return JSON.parse(text); } catch { return text; }
+}
+
+function isColumnError(err) {
+  return /column|schema cache|Could not find/i.test(String(err && err.message || err));
+}
+
+async function postWithBasicFallback(table, fullPayload, basicPayload) {
+  try {
+    await sbPost(table, fullPayload, {returnRepresentation:false});
+    return {usedFallback:false};
+  } catch (err) {
+    if (basicPayload && isColumnError(err)) {
+      console.warn(`Full ${table} payload did not match the current schema; retrying with basic fields only.`, err);
+      await sbPost(table, basicPayload, {returnRepresentation:false});
+      return {usedFallback:true, reason: err.message};
+    }
+    throw err;
+  }
+}
+
+async function postOptional(table, payload) {
+  try {
+    await sbPost(table, payload, {returnRepresentation:false});
+    return true;
+  } catch (err) {
+    console.warn(`Optional sync to ${table} skipped:`, err);
+    return false;
+  }
+}
+
+
+function safeFileName(name) {
+  const dot = name.lastIndexOf('.') >= 0 ? name.slice(name.lastIndexOf('.')) : '';
+  const base = name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'document';
+  return `${base}${dot.toLowerCase()}`;
+}
+
+function storagePublicUrl(path) {
+  return `${SUPABASE_URL}/storage/v1/object/public/${DOCUMENTS_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`;
+}
+
+async function uploadDocumentFile(file, folder, documentType, label) {
+  if (!file) return null;
+  const fileName = `${Date.now()}-${documentType}-${safeFileName(file.name)}`;
+  const path = `${folder}/${fileName}`;
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const r = await fetch(`${SUPABASE_URL}/storage/v1/object/${DOCUMENTS_BUCKET}/${encodedPath}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': file.type || 'application/octet-stream',
+      'x-upsert': 'false',
+      'cache-control': '3600'
+    },
+    body: file
+  });
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`${label} upload failed (${r.status}). Check Storage bucket "${DOCUMENTS_BUCKET}" and upload policies. ${text}`);
+  }
+  return {
+    document_type: documentType,
+    file_name: file.name,
+    mime_type: file.type || null,
+    size_bytes: file.size,
+    bucket_name: DOCUMENTS_BUCKET,
+    storage_path: path,
+    file_url: storagePublicUrl(path)
+  };
+}
+
+async function uploadRegistrationDocuments(regNum) {
+  const cleanUser = (appState.username || 'unknown').replace(/[^a-zA-Z0-9_-]+/g, '-');
+  const folder = `applicants/${cleanUser}/${regNum}`;
+  const docs = [];
+  const photo = await uploadDocumentFile(document.getElementById('photoInput').files[0], folder, 'applicant_photo', 'Applicant photo');
+  const idFront = await uploadDocumentFile(document.getElementById('idInput').files[0], folder, 'id_card_front', 'ID front');
+  const idBack = await uploadDocumentFile(document.getElementById('idBackInput').files[0], folder, 'id_card_back', 'ID back');
+  [photo, idFront, idBack].forEach(d => { if (d) docs.push(d); });
+  return {
+    documents: docs,
+    photo_url: photo ? photo.file_url : null,
+    id_card_front_url: idFront ? idFront.file_url : null,
+    id_card_back_url: idBack ? idBack.file_url : null
+  };
+}
+
+// Seat counts are intentionally NOT updated from this public registration page.
+// booked_seats should be increased by the exam/admin system only after payment is confirmed.
+
+// Stepper
+function setStep(n) {
+  currentStep = n;
+  [1,2,3,4].forEach(i => {
+    document.getElementById(`step${i}`).style.display = (i===n) ? 'block' : 'none';
+    const sn = document.getElementById(`sn${i}`);
+    const sl = document.getElementById(`sl${i}`);
+    if(i < n) { sn.className='step-num done'; sn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'; sl.className='step-label active'; }
+    else if(i===n) { sn.className='step-num active'; sn.textContent=i; sl.className='step-label active'; }
+    else { sn.className='step-num todo'; sn.textContent=i; sl.className='step-label todo'; }
+    if(i < 4 && i < n) document.getElementById(`sd${i}`).className = 'step-divider done';
+  });
+  const pct = ((n-1)/3*100);
+  document.getElementById('progressFill').style.width = (25 + pct*0.75) + '%';
+  document.getElementById('progressLabel').textContent = `Step ${n} of 4`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateSummary() {
+  const fn = (document.getElementById('firstName').value || '') + ' ' + (document.getElementById('lastName').value || '');
+  document.getElementById('sumName').textContent = fn.trim() || '—';
+  if (selectedSession) {
+    document.getElementById('sumFormat').textContent = selectedSession.session_type === 'center' ? 'Test Center (iBT 2.0)' : 'Home Edition';
+    document.getElementById('sumSession').textContent = selectedSession.exam_date;
+    document.getElementById('sumLocation').textContent = selectedSession.center_city || 'Online / Worldwide';
+  }
+}
+
+// Validation
+function goStep2() {
+  const checks = [document.getElementById('ec1'), document.getElementById('ec2'), document.getElementById('ec3'), document.getElementById('ec4')];
+  if (checks.some(c => !c.checked)) { alert('Please confirm all eligibility requirements before proceeding.'); return; }
+  if (!document.getElementById('firstName').value.trim()) { alert('Please enter your first name.'); return; }
+  if (!document.getElementById('fullName').value.trim()) { alert('Please enter your full name as it appears on your ID.'); return; }
+  if (!document.getElementById('email').value.trim()) { alert('Please enter your email address.'); return; }
+  if (document.getElementById('email').value !== document.getElementById('emailConfirm').value) { alert('Email addresses do not match.'); return; }
+  if (!document.getElementById('username').value.trim()) { alert('Please choose a username.'); return; }
+  appState.firstName = document.getElementById('firstName').value.trim();
+  appState.lastName = document.getElementById('lastName').value.trim();
+  appState.fullName = document.getElementById('fullName').value.trim();
+  appState.email = document.getElementById('email').value.trim();
+  appState.username = document.getElementById('username').value.trim();
+  appState.dob = document.getElementById('dob').value;
+  appState.nationality = document.getElementById('nationality').value;
+  appState.idType = document.getElementById('idType').value;
+  appState.passportNum = document.getElementById('passportNum').value.trim();
+  appState.eduLevel = document.getElementById('eduLevel').value;
+  updateSummary();
+  setStep(2);
+  loadSessions();
+}
+
+function goStep1() { setStep(1); }
+function goStep3() {
+  if (!selectedSession) { alert('Please select an exam session.'); return; }
+  updateSummary();
+  setStep(3);
+}
+function goStep2b() { setStep(2); }
+function goStep4() {
+  if (!document.getElementById('photoInput').files[0]) { alert('Please upload your applicant photo.'); return; }
+  if (!document.getElementById('idInput').files[0]) { alert('Please upload your passport/ID scan.'); return; }
+  buildReview();
+  setStep(4);
+}
+function goStep3b() { setStep(3); }
+
+// Load sessions from database with fallback
+const fallbackSessions = [
+  {id:'s1',session_code:'PTW-2027-01-C-BJ01',session_type:'center',exam_date:'2027-01-16',check_in_time:'08:00',exam_start_time:'08:30',exam_end_time:'11:30',center_city:'Beijing / Shanghai',center_name:'HBBSS Beijing Center',total_seats:120,booked_seats:47,registration_closes:'2027-01-09T23:59:59Z',status:'open'},
+  {id:'s2',session_code:'PTW-2027-01-H-02',session_type:'home',exam_date:'2027-01-24',check_in_time:null,exam_start_time:'14:00',exam_end_time:'17:00',center_city:null,center_name:null,total_seats:500,booked_seats:213,registration_closes:'2027-01-18T23:59:59Z',status:'open'},
+  {id:'s3',session_code:'PTW-2027-03-C-BJ01',session_type:'center',exam_date:'2027-03-20',check_in_time:'08:00',exam_start_time:'08:30',exam_end_time:'11:30',center_city:'Beijing',center_name:'HBBSS Beijing Center (Annex B)',total_seats:120,booked_seats:8,registration_closes:'2027-03-13T23:59:59Z',status:'open'},
+  {id:'s4',session_code:'PTW-2027-03-H-01',session_type:'home',exam_date:'2027-03-13',check_in_time:null,exam_start_time:'09:00',exam_end_time:'12:00',center_city:null,center_name:null,total_seats:500,booked_seats:0,registration_closes:'2027-03-08T23:59:59Z',status:'open'},
+  {id:'s5',session_code:'PTW-2027-06-C-SH01',session_type:'center',exam_date:'2027-06-19',check_in_time:'08:00',exam_start_time:'08:30',exam_end_time:'11:30',center_city:'Shanghai',center_name:'HBBSS Shanghai Center',total_seats:120,booked_seats:0,registration_closes:'2027-06-12T23:59:59Z',status:'open'},
+  {id:'s6',session_code:'PTW-2027-06-H-01',session_type:'home',exam_date:'2027-06-12',check_in_time:null,exam_start_time:'09:00',exam_end_time:'12:00',center_city:null,center_name:null,total_seats:500,booked_seats:0,registration_closes:'2027-06-07T23:59:59Z',status:'open'},
+  {id:'s7',session_code:'PTW-2027-09-C-BJ01',session_type:'center',exam_date:'2027-09-18',check_in_time:'08:00',exam_start_time:'08:30',exam_end_time:'11:30',center_city:'Beijing',center_name:'HBBSS Beijing Center',total_seats:120,booked_seats:0,registration_closes:'2027-09-11T23:59:59Z',status:'open'},
+  {id:'s8',session_code:'PTW-2027-11-C-SH01',session_type:'center',exam_date:'2027-11-20',check_in_time:'08:00',exam_start_time:'08:30',exam_end_time:'11:30',center_city:'Shanghai',center_name:'HBBSS Shanghai Center',total_seats:120,booked_seats:0,registration_closes:'2027-11-13T23:59:59Z',status:'open'},
+];
+
+let allSessions = [];
+let sessionFilter = 'all';
+
+function isRegistrationOpenSession(s) {
+  const now = new Date();
+  const deadline = s.registration_closes ? new Date(s.registration_closes) : null;
+  const notClosed = String(s.status || 'open').toLowerCase() === 'open';
+  const beforeDeadline = !deadline || isNaN(deadline.getTime()) || deadline.getTime() >= now.getTime();
+  const total = Number(s.total_seats || 0);
+  const booked = Number(s.booked_seats || 0);
+  const hasSeat = !total || booked < total || String(s.session_type || '').toLowerCase() === 'home';
+  return notClosed && beforeDeadline && hasSeat;
+}
+
+async function loadSessions() {
+  const data = await sbGet('ptw_exam_sessions?status=eq.open&order=exam_date.asc&select=*');
+  const source = (data && data.length) ? data : fallbackSessions;
+  allSessions = source.filter(isRegistrationOpenSession);
+  renderSessions();
+}
+
+function renderSessions() {
+  const list = document.getElementById('sessionList');
+  const filtered = sessionFilter === 'all' ? allSessions : allSessions.filter(s => s.session_type === sessionFilter);
+  list.innerHTML = filtered.map(s => {
+    const remaining = s.total_seats - s.booked_seats;
+    const pct = Math.round((s.booked_seats / s.total_seats) * 100);
+    const deadline = new Date(s.registration_closes).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    const isSelected = selectedSession && selectedSession.id === s.id;
+    return `<div class="session-card ${isSelected?'selected':''}" onclick="selectSession('${s.id}')">
+      <input type="radio" name="session" ${isSelected?'checked':''} onclick="selectSession('${s.id}')">
+      <div class="session-info">
+        <div><span class="session-badge badge-${s.session_type}">${s.session_type==='center'?'TEST CENTER':'HOME EDITION'}</span> <span class="session-badge badge-open">OPEN</span></div>
+        <div class="session-title">${s.exam_date} &nbsp;·&nbsp; ${s.exam_start_time}–${s.exam_end_time}</div>
+        <div class="session-meta">
+          ${s.session_type==='center' ? `📍 ${s.center_name}, ${s.center_city}` : '🌐 Worldwide — Any location with approved setup'}<br>
+          Session: <strong>${s.session_code}</strong><br>
+          Seats: <strong>${remaining}</strong> remaining of ${s.total_seats}
+          <div style="background:var(--border);border-radius:3px;height:4px;width:100%;margin-top:5px;"><div style="background:${pct>80?'#f87171':pct>50?'#f59e0b':'#34d399'};width:${pct}%;height:4px;border-radius:3px;"></div></div>
+        </div>
+        <div class="badge-deadline">⏰ Registration closes: ${deadline}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div style="padding:20px;color:var(--gray);text-align:center;">No sessions available for this filter.</div>';
+}
+
+function selectSession(id) {
+  selectedSession = allSessions.find(s => s.id === id);
+  renderSessions();
+  updateSummary();
+}
+
+function filterSessions(type) {
+  sessionFilter = type;
+  ['fAll','fCenter','fHome'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(type === 'all' ? 'fAll' : type === 'center' ? 'fCenter' : 'fHome').classList.add('active');
+  renderSessions();
+}
+
+// Username check
+async function checkUsername(val) {
+  const hint = document.getElementById('usernameHint');
+  if (!val || val.length < 3) { hint.textContent = '3–20 characters, letters, numbers, and underscores only.'; hint.style.color = 'var(--gray)'; return; }
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(val)) { hint.textContent = '⚠️ Only letters, numbers, and underscores allowed.'; hint.style.color = 'var(--red)'; return; }
+  hint.textContent = 'Checking availability…'; hint.style.color = 'var(--gray)';
+  const data = await sbGet(`ptw_applicants?username=eq.${val}&select=id`);
+  if (data && data.length > 0) { hint.textContent = '✗ Username already taken.'; hint.style.color = 'var(--red)'; }
+  else { hint.textContent = '✓ Username available!'; hint.style.color = 'var(--green)'; }
+}
+
+// File upload helpers
+function previewFile(input, zoneId, listId) {
+  const file = input.files[0];
+  if (!file) return;
+  const list = document.getElementById(listId);
+  const ok = file.size <= 10*1024*1024;
+  list.innerHTML = `<div class="upload-file-item ${ok?'ok':'err'}">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${ok?'#16a34a':'#ef4444'}" stroke-width="2.5"><polyline points="${ok?'20 6 9 17 4 12':'18 6 6 18 6 6 18 18'}"/></svg>
+    <span class="ufi-name">${file.name}</span>
+    <span class="ufi-size">${(file.size/1024).toFixed(0)} KB</span>
+    <button class="ufi-rm" onclick="removeFile('${input.id}','${zoneId}','${listId}')">×</button>
+  </div>`;
+  document.getElementById(zoneId).style.borderColor = ok ? '#bbf7d0' : '#fca5a5';
+  if (!ok) alert('File is too large. Maximum size is 10 MB.');
+}
+function removeFile(inputId, zoneId, listId) {
+  document.getElementById(inputId).value = '';
+  document.getElementById(listId).innerHTML = '';
+  document.getElementById(zoneId).style.borderColor = 'var(--border)';
+}
+function dragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
+function dragLeave(zoneId) { document.getElementById(zoneId).classList.remove('dragover'); }
+function dropFile(e, inputId, zoneId) {
+  e.preventDefault();
+  document.getElementById(zoneId).classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  document.getElementById(inputId).files = dt.files;
+  document.getElementById(inputId).dispatchEvent(new Event('change'));
+}
+
+// Review page
+function buildReview() {
+  const s = selectedSession;
+  document.getElementById('reviewBlock').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;">
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Full Name</div><strong>${appState.fullName}</strong></div>
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Email</div><strong>${appState.email}</strong></div>
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Username</div><strong>${appState.username}</strong></div>
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Date of Birth</div><strong>${appState.dob || '—'}</strong></div>
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">ID Type</div><strong>${appState.idType}</strong></div>
+      <div><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Passport / ID No.</div><strong>${appState.passportNum || '—'}</strong></div>
+      <div style="grid-column:1/-1;padding-top:12px;border-top:1px solid var(--border);"><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Selected Session</div>
+        <strong>${s.exam_date} · ${s.exam_start_time}–${s.exam_end_time}</strong><br>
+        <span style="color:var(--gray);">${s.session_type==='center' ? `${s.center_name}, ${s.center_city}` : 'Home Edition — Worldwide'}</span><br>
+        <span style="font-size:11px;color:var(--gray);">Code: ${s.session_code}</span>
+      </div>
+    </div>`;
+  document.getElementById('finalName').textContent = appState.fullName;
+  document.getElementById('finalDate').textContent = s.exam_date;
+  document.getElementById('finalFormat').textContent = s.session_type === 'center' ? 'Test Center (iBT 2.0)' : 'Home Edition';
+}
+
+// Submit
+async function submitRegistration() {
+  const checks = [document.getElementById('fc1'), document.getElementById('fc2'), document.getElementById('fc3')];
+  if (checks.some(c => !c.checked)) { alert('Please confirm all declarations before submitting.'); return; }
+  if (!selectedSession) { alert('Please select an exam session first.'); return; }
+
+  const lo = document.getElementById('loadingOverlay');
+  lo.classList.add('show');
+  document.getElementById('loadingText').textContent = 'Preparing registration…';
+
+  const regNum = 'PTW-2027-' + Math.floor(1000000 + Math.random() * 9000000);
+  const applicantId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  appState.regNum = regNum;
+
+  try {
+    document.getElementById('loadingText').textContent = 'Uploading documents to secure storage…';
+    const documentUrls = await uploadRegistrationDocuments(regNum);
+
+    const currentLang = (localStorage.getItem('ptw_lang') || document.querySelector('.lang-select')?.value || 'en');
+
+    const applicantBasicPayload = {
+      id: applicantId,
+      username: appState.username,
+      email: appState.email,
+      full_name: appState.fullName,
+      account_status: 'pending'
+    };
+
+    const applicantFullPayload = {
+      ...applicantBasicPayload,
+      date_of_birth: appState.dob || null,
+      nationality: appState.nationality || null,
+      passport_number: appState.passportNum || null,
+      highest_education: appState.eduLevel || null,
+      id_type: appState.idType,
+      preferred_lang: currentLang,
+      photo_url: documentUrls.photo_url,
+      id_card_front_url: documentUrls.id_card_front_url,
+      id_card_back_url: documentUrls.id_card_back_url
+    };
+
+    document.getElementById('loadingText').textContent = 'Saving applicant record…';
+    const applicantSync = await postWithBasicFallback('ptw_applicants', applicantFullPayload, applicantBasicPayload);
+
+    const registrationBasicPayload = {
+      registration_number: regNum,
+      applicant_id: applicantId,
+      session_id: selectedSession.id,
+      status: 'pending_docs'
+    };
+
+    const registrationFullPayload = {
+      ...registrationBasicPayload,
+      amount_paid: 235.00,
+      currency: 'USD'
+    };
+
+    document.getElementById('loadingText').textContent = 'Saving registration record…';
+    await postWithBasicFallback('ptw_registrations', registrationFullPayload, registrationBasicPayload);
+
+    // Do not update ptw_exam_sessions.booked_seats here.
+    // Seats are counted only after payment confirmation in the exam/admin system.
+
+    // Best-effort document table sync. The file itself is already in Storage; this writes metadata if your table has matching fields.
+    document.getElementById('loadingText').textContent = 'Saving document metadata…';
+    let docRowsSynced = 0;
+    for (const d of documentUrls.documents) {
+      const ok = await postOptional('ptw_documents', {
+        applicant_id: applicantId,
+        registration_number: regNum,
+        document_type: d.document_type,
+        file_name: d.file_name,
+        mime_type: d.mime_type,
+        size_bytes: d.size_bytes,
+        bucket_name: d.bucket_name,
+        storage_path: d.storage_path,
+        file_url: d.file_url,
+        status: 'pending_review'
+      });
+      if (ok) docRowsSynced++;
+    }
+
+    console.info('PTW registration synced', {
+      applicant_id: applicantId,
+      registration_number: regNum,
+      applicant_schema_fallback: applicantSync.usedFallback,
+      documents_uploaded: documentUrls.documents.length,
+      document_rows_synced: docRowsSynced,
+      session_booked_seats_updated: false
+    });
+
+    document.getElementById('loadingText').textContent = 'Finalising…';
+    await new Promise(r => setTimeout(r, 350));
+
+    lo.classList.remove('show');
+    document.getElementById('finalTicket').textContent = regNum;
+    document.getElementById('mainFlow').style.display = 'none';
+    document.getElementById('successPage').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch (err) {
+    lo.classList.remove('show');
+    console.error(err);
+    alert(humanizeError(err));
+  }
+}
+</script>
+
+<script src="ptw-i18n-fix.js"></script>
+</body>
+</html>

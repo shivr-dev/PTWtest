@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ptw2027-secure-exam-v1';
+const CACHE_NAME = 'ptw2027-secure-exam-v8';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './ptw-icon-192.png', './ptw-icon-512.png'];
 
 self.addEventListener('install', event => {
