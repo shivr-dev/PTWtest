@@ -1,4 +1,4 @@
-const APP_VERSION = 'v27.0.0';
+const APP_VERSION = 'v29.0.0';
 const CACHE_NAME = `ptw2027-secure-exam-${APP_VERSION}`;
 const APP_SHELL = [
   './',
