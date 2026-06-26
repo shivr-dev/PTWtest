@@ -1,0 +1,16 @@
+{
+  "name": "PTW 2027 Exam",
+  "short_name": "PTW Exam",
+  "description": "PTW 2027 secure browser exam portal",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#8d1118",
+  "orientation": "any",
+  "icons": [
+    { "src": "./ptw-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./ptw-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./ptw-icon.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
