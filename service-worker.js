@@ -1,12 +1,12 @@
-const APP_VERSION = 'v36.10.0';
+const APP_VERSION = 'v37.0.0';
 const CACHE_NAME = `ptw2027-secure-exam-${APP_VERSION}`;
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './version.json',
-  './assets/index-PTWv36-10.js',
-  './assets/index-PTWv36-10.css',
+  './assets/index-PTWv37.js',
+  './assets/index-PTWv37.css',
   './ptw-icon-192.png',
   './ptw-icon-512.png',
 ];
@@ -41,10 +41,6 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
 
-  // Never cache or proxy database/API requests. In PWA standalone mode Chrome may route
-  // every same-scope fetch through this service worker, and stale/cached REST responses
-  // can make candidate login feel much slower than opening the same URL in the browser.
-  // Let Supabase/Auth/Storage and any other cross-origin API go directly to network.
   if (url.origin !== self.location.origin || url.hostname.includes('supabase.co')) {
     return;
   }

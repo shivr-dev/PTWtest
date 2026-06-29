@@ -2,7 +2,7 @@
   "name": "PTW 2027 Exam",
   "short_name": "PTW 2027",
   "description": "PTW 2027 secure browser exam portal",
-  "start_url": "./?source=pwa&v=36.10.0",
+  "start_url": "./?source=pwa&v=37.0.0",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
